@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Billing Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h2>Pay with Card</h2>
+    <form action="{% url 'process_payment' %}" method="POST" id="payment-form">
+        {% csrf_token %}
+        <label>Amount (INR): </label>
+        <input type="number" name="amount" required>
+
+        <div id="card-element"></div>
+        <button type="submit">Pay</button>
+    </form>
+    {% comment %} <script>
+        var stripe = Stripe("{{ stripe_publishable_key }}");
+        var elements = stripe.elements();
+        var card = elements.create('card');
+        card.mount('#card-element');
+
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const { token, error } = await stripe.createToken(card);
+            if (error) {
+                alert(error.message);
+            } else {
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'stripeToken');
+                hiddenInput.setAttribute('value', token.id);
+                form.appendChild(hiddenInput);
+
+                form.submit();
+            }
+        });
+    </script> {% endcomment %}
+</body>
+</html>

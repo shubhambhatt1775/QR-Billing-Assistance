@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preset Items | QR Billing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #059669;
+            --primary-light: #ecfdf5;
+            --secondary: #10b981;
+            --bg: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR */
+        .navbar-custom {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand-logo {
+            font-weight: 800;
+            font-size: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-link-custom {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link-custom:hover,
+        .nav-link-custom.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* MAIN CONTENT */
+        .main-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        .page-header {
+            margin-bottom: 35px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h2 {
+            font-weight: 800;
+            font-size: 26px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .page-header i {
+            color: var(--primary);
+        }
+
+        /* TABLE STYLING */
+        .custom-table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: 20px;
+        }
+
+        .custom-table thead th {
+            border: none;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px 20px;
+        }
+
+        .custom-table tbody td {
+            background: #f8fafc;
+            padding: 18px 20px;
+            border: none;
+            vertical-align: middle;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .custom-table tbody tr:hover td {
+            background: var(--primary-light);
+        }
+
+        .custom-table tbody td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .custom-table tbody td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .item-id {
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .price-badge {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        .gst-badge {
+            background: #e2e8f0;
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
+        <div class="container-fluid px-lg-5">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'cashier_dashboard' %}" class="brand-logo">
+                    <i class="fas fa-terminal"></i> Cashier Terminal
+                </a>
+
+                <div class="d-none d-lg-flex gap-2">
+                    <a href="{% url 'cashier_dashboard' %}" class="nav-link-custom"><i class="fas fa-th-large"></i>
+                        Dashboard</a>
+                    <a href="{% url 'create_bill' %}" class="nav-link-custom"><i class="fas fa-plus-circle"></i> New
+                        Bill</a>
+                    <a href="{% url 'cashier_preset_items' %}" class="nav-link-custom active"><i
+                            class="fas fa-tags"></i> Presets</a>
+                    <a href="{% url 'cashier_payment' %}" class="nav-link-custom"><i class="fas fa-wallet"></i>
+                        Payments</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENT -->
+    <main class="main-container">
+        <div class="content-card">
+
+            <div class="page-header">
+                <h2><i class="fas fa-boxes"></i> Preset Inventory</h2>
+                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill small fw-bold">Admin
+                    Managed</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">ID</th>
+                            <th>Product Details</th>
+                            <th>Unit Price</th>
+                            <th>Tax (GST)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in preset_products %}
+                        <tr>
+                            <td><span class="item-id">#{{ product.Product_id }}</span></td>
+                            <td>
+                                <div class="fw-bold">{{ product.Product_name }}</div>
+                                <div class="text-muted small">Available for Quick Billing</div>
+                            </td>
+                            <td><span class="price-badge">₹{{ product.Price }}</span></td>
+                            <td><span class="gst-badge">{{ product.GST_percentage }}%</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fas fa-folder-open"></i>
+                                    <p>No preset products found in the database.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-4 border-top">
+        <div class="container text-center">
+            <p class="text-muted small">&copy; 2026 QR Billing Assistant &bull; Secure Inventory Terminal</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

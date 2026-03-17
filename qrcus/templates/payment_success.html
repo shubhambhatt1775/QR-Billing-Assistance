@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful | QR Billing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            width: 100%;
+            padding: 50px 30px;
+            text-align: center;
+            animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .icon-circle {
+            width: 100px;
+            height: 100px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin: 0 auto 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(22, 101, 52, 0.2);
+            }
+
+            70% {
+                box-shadow: 0 0 0 25px rgba(22, 101, 52, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(22, 101, 52, 0);
+            }
+        }
+
+        h1 {
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .payment-details {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .value {
+            color: #1e293b;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        .btn-home {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-home:hover {
+            background: #6d28d9;
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.4);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="success-card">
+        <div class="icon-circle">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <h1>Payment Successful!</h1>
+        <p>Your transaction has been processed and your bill is now marked as paid.</p>
+
+        <div class="payment-details">
+            <div class="detail-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">{{ payment_id }}</span>
+            </div>
+            {% if bill_id %}
+            <div class="detail-row">
+                <span class="label">Bill Reference</span>
+                <span class="value">#INV-{{ bill_id }}</span>
+            </div>
+            {% endif %}
+            <div class="detail-row">
+                <span class="label">Status</span>
+                <span class="value" style="color: #166534;">COMPLETED</span>
+            </div>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+            {% if bill_id %}
+            <a href="{% url 'view_invoice' bill_id %}" class="btn-home"
+                style="background: #10b981; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);">
+                <i class="fas fa-file-download"></i> Download Invoice
+            </a>
+            {% endif %}
+
+            <a href="{% url 'index' %}" class="btn-home">
+                <i class="fas fa-home"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>

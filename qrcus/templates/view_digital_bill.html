@@ -1,0 +1,24 @@
+{% comment %} {% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Digital Bill</h3>
+    {% if bill and bill.pdf_url %}
+        <iframe src="{{ bill.pdf_url }}" width="100%" height="500px"></iframe>
+    {% else %}
+        <p>No digital bill available.</p>
+    {% endif %}
+</div>
+{% endblock %} {% endcomment %}
+
+
+{% comment %} 
+{% for bill in bills %}
+    <div style="border:1px solid green; padding:10px; margin:10px;">
+        <p><strong>Bill ID:</strong> {{ bill.id }}</p>
+        <p><strong>Amount:</strong> ₹{{ bill.amount }}</p>
+        <p><strong>Date:</strong> {{ bill.bill_date }}</p>
+        <p style="color:green;"><strong>Status:</strong> {{ bill.status }}</p>
+    </div>
+{% empty %}
+    <p>No paid bills available.</p>
+{% endfor %} {% endcomment %}

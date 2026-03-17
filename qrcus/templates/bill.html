@@ -1,0 +1,583 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Billing Assistant - My Bill</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+
+            /* ===== GENERAL STYLES ===== */
+body {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== HEADER ===== */
+.navbar {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-brand i {
+    margin-right: 10px;
+}
+
+.nav-link {
+    color: #fff !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #f8f9fa !important;
+    transform: translateY(-2px);
+}
+
+/* ===== DASHBOARD PAGE ===== */
+.dashboard-card {
+    margin-top: 60px;
+    padding: 40px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-card h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1e3c72;
+    font-weight: 700;
+}
+
+.dashboard-card p {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #555;
+}
+
+/* Buttons */
+.btn-custom {
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: none;
+}
+
+.btn-custom:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-custom:hover:before {
+    left: 100%;
+}
+
+.btn-custom:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+/* Features Section */
+.features {
+    margin-top: 50px;
+    padding: 40px 0;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    font-size: 3rem;
+    color: #1e3c72;
+    margin-bottom: 15px;
+}
+
+/* ===== BILL PAGE ===== */
+.bill-card {
+    margin-top: 60px;
+    padding: 40px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.bill-card h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1e3c72;
+    font-weight: 700;
+}
+
+.bill-details {
+    margin-bottom: 30px;
+}
+
+.bill-details h5 {
+    color: #1e3c72;
+    margin-bottom: 15px;
+}
+
+.bill-details p {
+    margin-bottom: 10px;
+}
+
+.bill-table {
+    margin-bottom: 30px;
+}
+
+.bill-table th {
+    background-color: #1e3c72;
+    color: #fff;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    margin-top: auto;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(40,40,40,0.9));
+    color: #ffffff;
+    padding: 50px 0 20px;
+    backdrop-filter: blur(12px);
+    animation: fadeInUp 1s ease-in-out;
+}
+
+footer h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+footer h5::after {
+    content: '';
+    width: 40px;
+    height: 3px;
+    background: #00d4ff;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+}
+
+footer p {
+    font-size: 15px;
+    color: #dcdcdc;
+    line-height: 1.6;
+}
+
+footer a {
+    text-decoration: none;
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: #00d4ff;
+    text-decoration: underline;
+}
+
+/* Social Icons */
+.social-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    margin-right: 10px;
+    transition: all 0.4s ease;
+}
+
+.social-icons a:hover {
+    background: #00d4ff;
+    color: #000;
+    transform: translateY(-5px) scale(1.1);
+}
+
+/* Footer Bottom */
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    margin-top: 30px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .dashboard-card,
+    .bill-card {
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    .btn-custom {
+        font-size: 16px;
+        padding: 15px;
+        width: auto;
+        margin: 10px;
+    }
+
+    .feature-card {
+        padding: 15px;
+    }
+
+    .feature-card i {
+        font-size: 2.5rem;
+    }
+
+    footer {
+        text-align: center;
+        padding: 30px 0 15px;
+    }
+
+    .footer-links {
+        text-align: center !important;
+        margin-top: 10px;
+    }
+
+    .social-icons a {
+        margin-right: 5px;
+        width: 35px;
+        height: 35px;
+    }
+}
+    </style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <i class="fas fa-qrcode"></i> QR Billing Assistant
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ================= MAIN CONTENT ================= -->
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="bill-card">
+                <h2>My Bill Details</h2>
+
+                <div class="bill-details">
+                    <h5>Bill Information</h5>
+
+                    <div class="container mt-5">
+                        <div class="card shadow p-4">
+                            <h3 class="text-center mb-4">My Bill Details</h3>
+
+                            {% if bill %}
+                                <p><strong>Bill ID:</strong> {{ bill.id }}</p>
+                                <p><strong>Customer:</strong> {{ bill.user.fname }} {{ bill.user.lname }}</p>
+                                <p><strong>Email:</strong> {{ bill.user.email }}</p>
+                                <p><strong>Bill Date:</strong> {{ bill.bill_date }}</p>
+                                <p><strong>Amount:</strong> ₹{{ bill.amount }}</p>
+                                <p><strong>Status:</strong>
+                                    {% if bill.status == "Pending" %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Paid</span>
+                                    {% endif %}
+                                </p>
+
+                                {% if bill.status == "Pending" %}
+                                    <a href="#" class="btn btn-success mt-3">Pay Now</a>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-danger text-center">No bill found.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bill-table">
+                    <h5>Bill Breakdown</h5>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in bill.items %}
+                                <tr>
+                                    <td>{{ item.description }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>₹{{ item.unit_price }}</td>
+                                    <td>₹{{ item.total }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td><strong>Subtotal</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>₹{{ bill.subtotal }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tax ({{ bill.tax_rate }}%)</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>₹{{ bill.tax_amount }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Total Amount</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>₹{{ bill.total_amount }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center">
+                    {% if bill.status == 'pending' %}
+                        <button class="btn btn-success btn-custom" onclick="payNow()">
+                            <i class="fas fa-credit-card"></i> Pay Now
+                        </button>
+                    {% endif %}
+                    <button class="btn btn-primary btn-custom" onclick="downloadBill()">
+                        <i class="fas fa-download"></i> Download Bill
+                    </button>
+                    <button class="btn btn-info btn-custom" onclick="viewDigitalBill()">
+                        <i class="fas fa-file-invoice"></i> View Digital Bill
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'index' %}" class="text-white">Home</a></li>
+                    {% if not user.is_authenticated %}
+                        <li><a href="{% url 'login' %}" class="text-white">Login</a></li>
+                        <li><a href="{% url 'register' %}" class="text-white">Register</a></li>
+                    {% endif %}
+
+                    <footer id="contact">
+    <div class="container">
+        <div class="row gy-4">
+
+            <!-- About -->
+            <div class="col-md-4">
+                <h5>QR Billing Assistant</h5>
+                <p>
+                    QR Billing Assistant is a smart digital billing solution designed for
+                    fast, secure, and contactless payments. This MCA Industrial Project
+                    focuses on modernizing the traditional billing system using QR code
+                    technology for better efficiency and user experience.
+                </p>
+            </div>
+
+            <!-- Quick Info -->
+            <div class="col-md-4">
+                <h5>Why Choose Us?</h5>
+                <p>✔ Contactless & paperless billing</p>
+                <p>✔ Mobile & laptop friendly system</p>
+                <p>✔ Faster checkout process</p>
+                <p>✔ Secure digital payment support</p>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-md-4">
+                <h5>Contact Information</h5>
+                <p><i class="fas fa-envelope me-2"></i>
+                    <a href="mailto:support@qrbilling.com">support@qrbilling.com</a>
+                </p>
+                <p><i class="fas fa-phone me-2"></i> +1 (123) 456-7890</p>
+                <p><i class="fas fa-map-marker-alt me-2"></i> Tech City, Digital India</p>
+
+                <div class="social-icons mt-3">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom -->
+        <div class="row footer-bottom align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0">
+                    © 2026 QR Billing Assistant | MCA Industrial Project
+                </p>
+            </div>
+            <div class="col-md-6 text-end footer-links">
+                <a href="#" class="me-3">Privacy Policy</a>
+                <a href="#" class="me-3">Terms of Service</a>
+                <a href="#">FAQ</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ================= MODALS ================= -->
+<!-- Pay Now Modal -->
+<div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="payModalLabel">Payment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'process_payment' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="cardNumber" name="card_number" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiry" class="form-label">Expiry Date</label>
+                        <input type="text" class="form-control" id="expiry" name="expiry" placeholder="MM/YY" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+                    </div>
+                    <input type="hidden" name="bill_id" value="{{ bill.id }}">
+                    <button type="submit" class="btn btn-success">Pay ₹{{ bill.total_amount }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Digital Bill Modal -->
+<div class="modal fade" id="digitalBillModal" tabindex="-1" aria-labelledby="digitalBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="digitalBillModalLabel">Digital Bill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="{% static 'bills/bill_{{ bill.id }}.pdf' %}" width="100%" height="400px"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function payNow() {
+        var modal = new bootstrap.Modal(document.getElementById('payModal'));
+        modal.show();
+    }
+
+    function downloadBill() {
+        // Simulate download
+        var link = document.createElement('a');
+        link.href = '{% static "bills/bill_' + {{ bill.id }} + '.pdf" %}';
+        link.download = 'bill_{{ bill.id }}.pdf';
+        link.click();
+    }
+
+    function viewDigitalBill() {
+        var modal = new bootstrap.Modal(document.getElementById('digitalBillModal'));
+        modal.show();
+    }
+</script>
+
+</body>
+</html>
