@@ -94,25 +94,43 @@ graph TD
 
 ## ⚙️ Installation & Setup
 
-1.  **Clone the repository**
-2.  **Install dependencies**:
+Follow these steps to get the environment ready and the project running:
+
+1.  **Clone the Repository**:
     ```bash
-    pip install django razorpay
+    git clone https://github.com/shubhambhatt1775/QR-Billing-Assistance.git
+    cd QR-Billing-Assistance/qr
     ```
-3.  **Environment Setup**: 
-    Add your Razorpay credentials to `settings.py`:
-    ```python
-    RAZOR_KEY_ID = 'your_key'
-    RAZOR_KEY_SECRET = 'your_secret'
+
+2.  **Activate Virtual Environment**:
+    - **Windows**:
+      ```powershell
+      .\venv\Scripts\activate
+      ```
+    - **Mac/Linux**:
+      ```bash
+      source venv/bin/activate
+      ```
+
+3.  **Install Necessary Libraries**:
+    ```bash
+    pip install -r requirements.txt
     ```
-4.  **Run Migrations**:
+
+4.  **Database Migration**:
+    Initialize your local SQLite database:
     ```bash
     python manage.py migrate
     ```
-5.  **Start Server**:
+
+5.  **Start the Server**:
+    Launch the development server:
     ```bash
     python manage.py runserver
     ```
+
+6.  **Access Portals**:
+    Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser.
 
 ---
 *Created by the QR Billing Assistant Team &bull; 2026*
