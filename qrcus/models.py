@@ -65,6 +65,7 @@ class Payment(models.Model):
         ('Pending', 'Pending'),
         ('Failed', 'Failed'),
     ]
+    bill = models.ForeignKey(Bill, on_delete=models.CASCADE, null=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     amount = models.FloatField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)

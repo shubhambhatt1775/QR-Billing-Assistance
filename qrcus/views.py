@@ -4,6 +4,9 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import registration, Bill, Product, Payment, Sale, Customer
 import stripe
 from decimal import Decimal
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta
 
 # -------- Home --------
 def index(request):
@@ -297,6 +300,7 @@ def create_bill(request):
 
         # ✅ CREATE PENDING PAYMENT ENTRY
         Payment.objects.create(
+            bill=bill,
             customer=customer,
             amount=float(final_total),
             status="Pending"
@@ -537,7 +541,7 @@ def payment_success(request):
             bill.save()
             
             # Update Payment entry
-            payment = Payment.objects.filter(customer=bill.customer, status="Pending").order_by('-id').first()
+            payment = Payment.objects.filter(bill=bill).order_by('-id').first()
             if payment:
                 payment.status = "Paid"
                 payment.transaction_id = payment_id
@@ -545,6 +549,7 @@ def payment_success(request):
             else:
                 # If no pending payment exists (e.g. manual payment or direct link), create one
                 Payment.objects.create(
+                    bill=bill,
                     customer=bill.customer,
                     amount=bill.amount,
                     status="Paid",
@@ -597,7 +602,7 @@ def paymenthandler(request):
                 bill.save()
                 
                 # Update Payment entry
-                payment = Payment.objects.filter(customer=bill.customer, status="Pending").order_by('-id').first()
+                payment = Payment.objects.filter(bill=bill).order_by('-id').first()
                 if payment:
                     payment.status = "Paid"
                     payment.transaction_id = payment_id
@@ -651,3 +656,105 @@ def pay_now(request):
         return redirect('index')
     except Exception as e:
         return render(request, "pay_now.html", {"error": str(e)})
+
+# -------- Admin Billing Summary & Reports --------
+
+def admin_billing_summary(request):
+    now = timezone.now()
+    
+    # Fixed Summaries
+    week_start = now - timedelta(days=7)
+    weekly_bills = Bill.objects.filter(bill_date__gte=week_start)
+    weekly_paid = weekly_bills.filter(status='Paid').count()
+    weekly_pending = weekly_bills.filter(status='Pending').count()
+    weekly_amount = weekly_bills.filter(status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0
+
+    month_start = now - timedelta(days=30)
+    monthly_bills = Bill.objects.filter(bill_date__gte=month_start)
+    monthly_paid = monthly_bills.filter(status='Paid').count()
+    monthly_pending = monthly_bills.filter(status='Pending').count()
+    monthly_amount = monthly_bills.filter(status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0
+
+    year_start = now - timedelta(days=365)
+    yearly_bills = Bill.objects.filter(bill_date__gte=year_start)
+    yearly_paid = yearly_bills.filter(status='Paid').count()
+    yearly_pending = yearly_bills.filter(status='Pending').count()
+    yearly_amount = yearly_bills.filter(status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0
+
+    # Custom Filter Range
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+    custom_stats = None
+
+    if start_date_str and end_date_str:
+        from datetime import datetime
+        try:
+            custom_start = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+            custom_end = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            custom_bills = Bill.objects.filter(bill_date__range=[custom_start, custom_end])
+            custom_stats = {
+                'start': start_date_str,
+                'end': end_date_str,
+                'paid': custom_bills.filter(status='Paid').count(),
+                'pending': custom_bills.filter(status='Pending').count(),
+                'amount': round(custom_bills.filter(status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0, 2)
+            }
+        except ValueError:
+            pass
+
+    # Customer History (list of all customers)
+    customers = Customer.objects.all().order_by('name')
+
+    context = {
+        'weekly_paid': weekly_paid,
+        'weekly_pending': weekly_pending,
+        'weekly_amount': round(weekly_amount, 2),
+        'monthly_paid': monthly_paid,
+        'monthly_pending': monthly_pending,
+        'monthly_amount': round(monthly_amount, 2),
+        'yearly_paid': yearly_paid,
+        'yearly_pending': yearly_pending,
+        'yearly_amount': round(yearly_amount, 2),
+        'customers': customers,
+        'custom_stats': custom_stats
+    }
+    return render(request, 'admin_billing_summary.html', context)
+
+def customer_billing_report(request, customer_id):
+    try:
+        customer = Customer.objects.get(id=customer_id)
+        bills = Bill.objects.filter(customer=customer).order_by('-bill_date')
+        
+        # Build dynamic summaries for bills that might have empty items_summary
+        for bill in bills:
+            # Add transaction_id link for the template
+            payment = Payment.objects.filter(bill=bill, status="Paid").first()
+            if payment:
+                bill.transaction_id = payment.transaction_id
+            else:
+                bill.transaction_id = "---"
+
+            if not bill.items_summary:
+                sales = Sale.objects.filter(bill=bill)
+                if sales.exists():
+                    bill.items_summary = ", ".join([s.product_name for s in sales])
+                else:
+                    bill.items_summary = "No items recorded"
+
+        payments = Payment.objects.filter(customer=customer).order_by('-date')
+        
+        total_billed = bills.aggregate(Sum('amount'))['amount__sum'] or 0
+        total_paid = payments.filter(status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_pending = bills.filter(status='Pending').aggregate(Sum('amount'))['amount__sum'] or 0
+        
+        context = {
+            'customer': customer,
+            'bills': bills,
+            'payments': payments,
+            'total_billed': round(total_billed, 2),
+            'total_paid': round(total_paid, 2),
+            'total_pending': round(total_pending, 2)
+        }
+        return render(request, 'customer_report.html', context)
+    except Customer.DoesNotExist:
+        return redirect('admin_dashboard')

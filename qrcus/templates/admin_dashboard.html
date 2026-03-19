@@ -267,7 +267,8 @@
             <nav class="navbar">
                 <a href="{% url 'admin_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 <a href="{% url 'manage_products' %}"><i class="fas fa-box"></i> Products</a>
-                <a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Reports</a>
+                <a href="{% url 'admin_billing_summary' %}"><i class="fas fa-file-invoice-dollar"></i> Billing Reports</a>
+                <a href="{% url 'sales_report' %}"><i class="fas fa-chart-line"></i> Sales Report</a>
                 <a href="{% url 'admin_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 
             </nav>
@@ -335,6 +336,12 @@
             <i class="fas fa-chart-line"></i>
             <h3>Sales Reports</h3>
             <p>Daily & Monthly Sales</p>
+        </a>
+
+        <a href="{% url 'admin_billing_summary' %}" class="card">
+            <i class="fas fa-file-invoice-dollar" style="color: #8b5cf6;"></i>
+            <h3>Billing Reports</h3>
+            <p>Weekly / Monthly / Yearly Summary</p>
         </a>
 
         <a href="{% url 'admin_logout' %}" class="card logout">
